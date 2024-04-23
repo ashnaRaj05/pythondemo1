@@ -1,0 +1,85 @@
+
+{% load static %}
+{% load widget_tweaks %}
+<!DOCTYPE html>
+<html lang="en" data-theme="night">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <!--- Tailwind CSS & Daisy UI CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@2.18.0/dist/full.css" rel="stylesheet" type="text/css" />
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2/dist/tailwind.min.css" rel="stylesheet" type="text/css" />
+    <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'>
+    <!-- Favicon -->
+    <link rel="icon" href="{% static 'res/favicon.svg' %}">
+    <title>Todo List </title>
+</head>
+
+<body OnLoad="document.taskForm.task.focus();">
+<div class="container">
+        <header>
+            <h1>Todo List</h1>
+            <!-- message -->
+
+            {% if messages %}
+            {% for message in messages %}
+            <div class="alert-message" id="message">
+                <div class="alert alert-{{ message.tags }} shadow-lg mb-5 w-full rounded">
+                    <div>
+                        <span>
+                            {{ message }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% endif %}
+
+            <form method="POST" class="w-full" name="taskForm">
+                {% csrf_token %}
+                <div class="input-section">
+                    {% render_field form.task placeholder="Enter Your Task Here...." class="input input-bordered input-secondary w-full max-w-xs rounded focus:outline-none text-xl" %}
+                    <button class="btn btn-secondary rounded">
+                        <i class="bx bx-plus bx-sm"></i>
+                    </button>
+                </div>
+            </form>
+        </header>
+
+
+
+        <ul class="todos-list">
+            {% for task in todoList %}
+            <li class="todo-item">
+                <p
+                    class="text-xl {% if task.completed %}line-through{% endif %} transform hover:scale-110 motion-reduce:transform-none">
+                    <a href="{% url 'completeTaskView' task.id %}">{{task.task}}</a>
+                </p>
+                <div class="todo-actions">
+                    <a href="{% url 'editTaskView' task.id %}" class="btn btn-success rounded">
+                        <i class="bx bx-edit-alt bx-sm"></i>
+                    </a>
+                    <a href="{% url 'deleteTaskView' task.id %}" class="btn btn-error ml-2 rounded">
+                        <i class="bx bx-trash bx-sm"></i>
+                    </a>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <!-- JS -->
+    <script src="{% static 'js/theme_switcher.js' %}"></script>
+    <script>
+        setTimeout(function () {
+            var message = document.getElementById("message");
+            message.parentNode.removeChild(message);
+        }, 2000);
+    </script>
+</body>
+
+</html>
